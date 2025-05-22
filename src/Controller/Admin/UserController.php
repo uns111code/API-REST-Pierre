@@ -36,6 +36,18 @@ class UserController extends AbstractController
         );
     }
 
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    public function show(User $user): JsonResponse
+    {
+        return $this->json(
+            $user,
+            Response::HTTP_OK,
+            context: [
+                'groups' => ['common:index', 'users:index', 'user:show']
+            ]
+        );
+    }
+
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     public function update(
         User $user,
