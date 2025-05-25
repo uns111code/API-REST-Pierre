@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\DateTimeTrait;
 use App\Repository\ArticleRepository;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -19,26 +20,33 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['articles:index'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['articles:index'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    #[Gedmo\Slug(fields: ['title', 'id'])]
+    #[Gedmo\Slug(fields: ['title'])]
+    #[Groups(['articles:index'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['articles:index'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['articles:index'])]
     private ?string $shortContent = null;
 
     #[ORM\Column]
+    #[Groups(['articles:index'])]
     private ?bool $enabled = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['articles:index'])]
     private ?User $user = null;
 
     public function getId(): ?int

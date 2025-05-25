@@ -23,26 +23,28 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // $product = new Product();
-        // $manager->persist($product);
+        // Création d’un tableau pour stocker les utilisateurs
+        $arrayUsers = [];
 
-        $user = new User();
-        $user
+        // Création de l’admin
+        $admin = new User();
+        $admin
             ->setEmail('admin@admin.com')
             ->setPassword(
                 $this->passwordHasher->hashPassword(
-                    $user,
+                    $admin,
                     'admin'
                 )
             )
             ->setFirstName('admin')
             ->setLastName('admin');
-        $user->setRoles(['ROLE_ADMIN']);
+        $admin->setRoles(['ROLE_ADMIN']);
 
-        $manager->persist($user);
+        $manager->persist($admin);
+        $arrayUsers[] = $admin;
 
-
-        for ($i = 0; $i <= 15; $i++) {
+        // Création de 15 utilisateurs
+        for ($i = 0; $i < 15; $i++) {
             $user = new User();
             $user
                 ->setEmail($this->faker->unique()->email())
@@ -56,20 +58,23 @@ class AppFixtures extends Fixture
                 ->setLastName($this->faker->lastName());
 
             $manager->persist($user);
+            $arrayUsers[] = $user; // 👍 On ajoute à la liste des utilisateurs
         }
 
-        $article = new Article();
-        for ($i = 0; $i <= 15; $i++) {
+        // Création de 15 articles liés à des utilisateurs aléatoires
+        for ($i = 0; $i < 15; $i++) {
+            $article = new Article();
             $article
                 ->setTitle($this->faker->sentence(3))
                 ->setSlug($this->faker->slug())
                 ->setContent($this->faker->paragraph(5))
                 ->setShortContent($this->faker->paragraph(2))
-                ->setEnabled(true)
-                ->setUser($user);
+                ->setEnabled($this->faker->boolean())
+                ->setUser($this->faker->randomElement($arrayUsers));
 
             $manager->persist($article);
         }
+
         $manager->flush();
     }
 }
