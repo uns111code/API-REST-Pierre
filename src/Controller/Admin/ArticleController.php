@@ -4,17 +4,20 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use App\Mapper\ArticleMapper;
+use App\Dto\Filter\ArticleFilterDto;
 use App\Dto\Article\CreateArticleDto;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Dto\Article\UpdateArticleByAdminDto;
-use App\Dto\Filter\ArticleFilterDto;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 
 #[Route('/api/admin/articles', name: 'api_admin_articles_')]
 class ArticleController extends AbstractController
@@ -101,6 +104,40 @@ class ArticleController extends AbstractController
             Response::HTTP_OK,
             [],
             ['groups' => ['common:index', 'articles:index', 'articles:show']]
+        );
+    }
+
+    #[Route('/{id}/upload', name: 'upload', methods: ['POST'])]
+    public function upload(
+        Article $article,
+        #[MapUploadedFile(
+            new Image(
+                maxSize: '8M',
+                maxSizeMessage: 'The image is too large. Maximum size is {{ limit }} {{ suffix }}.',
+                mimeTypes: [
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp',
+                    'image/svg+xml',
+                    'image/jpg',
+                    'image/avif'
+                ],
+                mimeTypesMessage: 'Please upload a valid image file (JPEG, PNG, GIF, WebP, SVG, JPG, AVIF).',
+                detectCorrupted: true,
+            )
+        )]
+        UploadedFile $image
+    ): JsonResponse
+    {
+        // dd($image);
+        $article->setImageFile($image);
+
+        $this->em->flush();
+
+        return $this->json(
+            null,
+            Response::HTTP_NO_CONTENT,
         );
     }
 }
