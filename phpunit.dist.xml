@@ -41,6 +41,11 @@
             <directory>src</directory>
         </include>
 
+        <exclude>
+            <directory>src/DataFixture</directory>
+            <file>src/Kernel.php</file>
+        </exclude>
+
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
             <method>Doctrine\Deprecations\Deprecation::delegateTriggerToBackend</method>
