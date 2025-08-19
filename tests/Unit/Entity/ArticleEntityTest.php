@@ -89,7 +89,7 @@ class ArticleEntityTest extends KernelTestCase
         );
     }
 
-    public function testGenerationUpdatedAtOnPersist(): void
+    public function testGenerationUpdatedAtOnUpdated(): void
     {
         $article = $this->getArticle();
         $this->persistData($article, $article->getUser());
@@ -103,6 +103,22 @@ class ArticleEntityTest extends KernelTestCase
 
         $expected = (new \DateTimeImmutable())->format('Y-m-d H:i');
         $this->assertEquals($expected, $article->getUpdatedAt()->format('Y-m-d H:i'));
+    
+    }
+
+    public function testGenerationUpdatedAtOnUpdatedAtAndEnsureUpdatedAtIsChange(): void
+    {
+        $article = $this->getArticle();
+        $this->persistData($article, $article->getUser());
+
+        $updatedAt = new \DateTimeImmutable('2025-08-19 12:00:00');
+
+        $article
+            ->setUpdatedAt($updatedAt);
+        
+        $this->entityManager->flush();
+
+        $this->assertNotEquals($updatedAt, $article->getUpdatedAt());
     
     }
 
