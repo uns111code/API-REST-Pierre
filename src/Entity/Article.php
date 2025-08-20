@@ -2,28 +2,27 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\DateTimeTrait;
 use App\Repository\ArticleRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ORM\UniqueConstraint(fields: ['title'], name: 'UNIQUE_ARTICLE_TITLE')]
 #[ORM\HasLifecycleCallbacks]
-#[ORM\UniqueConstraint(name: 'UNIQ_ARTICLE_TITLE', fields: ['title'])]
 #[Vich\Uploadable]
 class Article
 {
-
     use DateTimeTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['articles:index'])]
+    #[Groups(['common:index'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -36,7 +35,7 @@ class Article
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['articles:index'])]
+    #[Groups(['articles:show'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
@@ -44,7 +43,6 @@ class Article
     private ?string $shortContent = null;
 
     #[ORM\Column]
-    #[Groups(['articles:index'])]
     private ?bool $enabled = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
@@ -52,14 +50,11 @@ class Article
     #[Groups(['articles:index'])]
     private ?User $user = null;
 
-
-    // NOTE: This is not a mapped field of entity metadata, just a simple property.
-    #[Vich\UploadableField(mapping: 'articles_image', fileNameProperty: 'imageName')]
+    #[Vich\UploadableField(mapping: 'articles_images', fileNameProperty: 'imageName')]
     private ?File $imageFile = null;
 
     #[ORM\Column(nullable: true)]
     private ?string $imageName = null;
-
 
     public function getId(): ?int
     {
@@ -137,8 +132,6 @@ class Article
 
         return $this;
     }
-
-
 
     /**
      * If manually uploading a file (i.e. not using Symfony Form) ensure an instance

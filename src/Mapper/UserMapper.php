@@ -17,9 +17,9 @@ class UserMapper
     {
         $user ??= new User;
 
-        if (null !== $dto->getEmail()) {
-            $user->setEmail(
-                $dto->getEmail()
+        if (null !== $dto->getUsername()) {
+            $user->setUsername(
+                $dto->getUsername()
             );
         }
 

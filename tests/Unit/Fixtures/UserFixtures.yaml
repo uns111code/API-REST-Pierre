@@ -1,4 +1,4 @@
 App\Entity\User:
     user_unique_username:
-      email: "John@example.com"
-      password: "password123"
+        username: "JohnDoe"
+        password: "password"

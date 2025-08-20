@@ -2,8 +2,8 @@
 
 namespace App\Mapper;
 
-use App\Entity\Article;
 use App\Dto\Interfaces\ArticleRequestInterface;
+use App\Entity\Article;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -41,11 +41,14 @@ class ArticleMapper
                 $dto->isEnabled()
             );
         }
+
         if (null !== $dto->getUser()) {
             $user = $this->userRepository->find($dto->getUser());
+
             if (null === $user) {
-                throw new NotFoundHttpException('Utilisateur introuvable');
+                throw new NotFoundHttpException('User not found');
             }
+
             $article->setUser(
                 $user
             );
@@ -53,5 +56,4 @@ class ArticleMapper
 
         return $article;
     }
-
 }

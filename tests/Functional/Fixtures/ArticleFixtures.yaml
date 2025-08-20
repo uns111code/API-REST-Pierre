@@ -1,10 +1,11 @@
 include:
-  - UserFixtures.yaml
-  
-App\Entity\Articles:
+    - UserFixtures.yaml
+
+App\Entity\Article:
     article_{1..12}:
         title: Article <current()>
-        content: <sentence(5)>
         shortContent: <sentence(5)>
+        content: <sentence(5)>
         enabled: <boolean()>
         user: "@user_*"
+        # user: <randomElement([@user_admin, @user_user])>

@@ -14,7 +14,7 @@ class UpdateUserByAdminDto implements UserRequestInterface
             minMessage: 'Le nom d\'utilisateur doit contenir au moins {{ limit }} caractères',
             maxMessage: 'Le nom d\'utilisateur ne peut pas dépasser {{ limit }} caractères'
         )]
-        private readonly ?string $Email = null,
+        private readonly ?string $username = null,
 
         #[Assert\Length(
             max: 255,
@@ -56,9 +56,9 @@ class UpdateUserByAdminDto implements UserRequestInterface
     ) {
     }
 
-    public function getEmail(): ?string
+    public function getUsername(): ?string
     {
-        return $this->Email;
+        return $this->username;
     }
 
     public function getFirstName(): ?string

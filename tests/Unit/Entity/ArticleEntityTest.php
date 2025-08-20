@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Validator\Constraints\Unique;
 
 class ArticleEntityTest extends KernelTestCase
 {
@@ -32,8 +31,8 @@ class ArticleEntityTest extends KernelTestCase
     private function getUser(): User
     {
         return (new User)
-            ->setEmail('test@example.com')
-            ->setPassword('password123  ');
+            ->setUsername('Test')
+            ->setPassword('password');
     }
 
     private function getArticle(): Article
@@ -77,7 +76,8 @@ class ArticleEntityTest extends KernelTestCase
 
     public function testGenerationCreatedAtOnPersistWithExistingCreatedAt(): void
     {
-        $createdAt = new \DateTimeImmutable('2023-01-01 12:00:00');
+        $createdAt = new \DateTimeImmutable('2025-01-01 12:00');
+
         $article = $this->getArticle()
             ->setCreatedAt($createdAt);
 
@@ -89,44 +89,44 @@ class ArticleEntityTest extends KernelTestCase
         );
     }
 
-    public function testGenerationUpdatedAtOnUpdated(): void
+    public function testGenerationUpdatedAtOnUpdate(): void
     {
         $article = $this->getArticle();
+
         $this->persistData($article, $article->getUser());
 
         $this->assertNull($article->getUpdatedAt());
 
         $article
-            ->setTitle('Nouveau Titre');
-        
+            ->setTitle('Nouveau titre');
+
         $this->entityManager->flush();
 
         $expected = (new \DateTimeImmutable())->format('Y-m-d H:i');
+
         $this->assertEquals($expected, $article->getUpdatedAt()->format('Y-m-d H:i'));
-    
     }
 
-    public function testGenerationUpdatedAtOnUpdatedAtAndEnsureUpdatedAtIsChange(): void
+    public function testGenerationUpdatedAtOnUpdateAndEnsureUpdatedIsChanged(): void
     {
         $article = $this->getArticle();
+
         $this->persistData($article, $article->getUser());
 
-        $updatedAt = new \DateTimeImmutable('2025-08-19 12:00:00');
-
+        $updatedAt = new \DateTimeImmutable('2025-01-01 12:00');
         $article
             ->setUpdatedAt($updatedAt);
-        
+
         $this->entityManager->flush();
 
         $this->assertNotEquals($updatedAt, $article->getUpdatedAt());
-    
     }
 
-    public function testExceptionNoUniqueTitle(): void
+    public function testExceptionWhenNoUniqueTitle(): void
     {
         $this->databaseTool->loadAliceFixture(
             [
-                \dirname(__DIR__) . '/Fixtures/ArticleFixtures.yaml',
+                \dirname(__DIR__) . '/Fixtures/ArticleFixtures.yaml'
             ]
         );
 

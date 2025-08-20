@@ -2,16 +2,16 @@
 
 namespace App\Controller\Admin;
 
-use App\Mapper\UserMapper;
-use App\Repository\UserRepository;
 use App\Dto\User\UpdateUserByAdminDto;
 use App\Entity\User;
+use App\Mapper\UserMapper;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/admin/users', name: 'api_admin_users_')]
 class UserController extends AbstractController
@@ -26,7 +26,7 @@ class UserController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): JsonResponse
     {
-     return $this->json(
+        return $this->json(
             $this->userRepository->findAll(),
             Response::HTTP_OK,
             context: [
@@ -42,7 +42,7 @@ class UserController extends AbstractController
             $user,
             Response::HTTP_OK,
             context: [
-                'groups' => ['common:index', 'users:index', 'user:show']
+                'groups' => ['common:index', 'users:index', 'users:show']
             ]
         );
     }
@@ -52,16 +52,16 @@ class UserController extends AbstractController
         User $user,
         #[MapRequestPayload]
         UpdateUserByAdminDto $dto,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $this->userMapper->map($dto, $user);
+
         $this->em->flush();
 
         return $this->json(
-           $user,
+            $user,
             Response::HTTP_OK,
             context: [
-                'groups' => ['common:index', 'users:index']
+                'groups' => ['common:index', 'users:index', 'users:show']
             ]
         );
     }
@@ -74,7 +74,7 @@ class UserController extends AbstractController
 
         return $this->json(
             null,
-            Response::HTTP_NO_CONTENT
+            Response::HTTP_NO_CONTENT,
         );
     }
 }

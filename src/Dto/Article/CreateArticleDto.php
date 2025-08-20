@@ -45,7 +45,8 @@ class CreateArticleDto implements ArticleRequestInterface
         #[Assert\NotBlank(message: 'L\'utilisateur est obligatoire')]
         #[Assert\Positive(message: 'L\'utilisateur doit être un identifiant valide')]
         private readonly ?int $user = null,
-    ) {}
+    ) {
+    }
 
     public function getTitle(): ?string
     {
@@ -72,3 +73,5 @@ class CreateArticleDto implements ArticleRequestInterface
         return $this->user;
     }
 }
+
+

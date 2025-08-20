@@ -12,9 +12,10 @@ trait DateTimeTrait
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['common:index'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
-        public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -38,16 +39,17 @@ trait DateTimeTrait
         return $this;
     }
 
-    #[ORM\PrePersist] // PrePersist -> Before the entity is persisted -> avant l'insertion dans la base de données exécute cette fonction
+    #[ORM\PrePersist]
     public function autoSetCreatedAt(): static
     {
         if (!$this->createdAt) {
             $this->createdAt = new \DateTimeImmutable();
         }
-        
+
         return $this;
     }
-    #[ORM\PreUpdate] // PreUpdate -> Before the entity is updated -> avant la mise à jour de l'entité exécute cette fonction
+
+    #[ORM\PreUpdate]
     public function autoSetUpdatedAt(): static
     {
         $this->updatedAt = new \DateTimeImmutable();
