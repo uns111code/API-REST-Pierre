@@ -2,49 +2,51 @@
 
 namespace App\Dto\Article;
 
-use App\Entity\Article;
 use App\Dto\Interfaces\ArticleRequestInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Article;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(
     fields: ['title'],
     entityClass: Article::class,
-    message: 'Cet article existe déjà'
+    message: 'Ce titre est déjà utilisé par un autre article'
 )]
 class CreateArticleDto implements ArticleRequestInterface
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'Titre est requis')]
+        #[Assert\NotBlank(message: 'Le titre est obligatoire')]
         #[Assert\Length(
             min: 3,
             max: 255,
-            minMessage: 'Titre doit contenir au moins {{ limit }} caractères',
-            maxMessage: 'Titre ne doit pas dépasser {{ limit }} caractères'
+            minMessage: 'Le titre doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères'
         )]
         private readonly ?string $title = null,
-        #[Assert\NotBlank(message: 'Contenu est requis')]
+
+        #[Assert\NotBlank(message: 'Le contenu est obligatoire')]
         #[Assert\Length(
-            min: 3,
-            minMessage: 'Contenu doit contenir au moins {{ limit }} caractères',
-            maxMessage: 'Contenu ne doit pas dépasser {{ limit }} caractères'
+            min: 10,
+            minMessage: 'Le contenu doit contenir au moins {{ limit }} caractères',
         )]
         private readonly ?string $content = null,
+
+        #[Assert\NotBlank(message: 'Le contenu court est obligatoire')]
         #[Assert\Length(
-            min: 3,
+            min: 5,
             max: 255,
-            maxMessage: 'Contenu court ne doit pas dépasser {{ limit }} caractères'
+            minMessage: 'Le contenu court doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Le contenu court ne peut pas dépasser {{ limit }} caractères'
         )]
         private readonly ?string $shortContent = null,
-        #[Assert\NotBlank(message: 'Statut est requis')]
 
         private readonly bool $enabled = false,
-        
-        #[Assert\NotBlank(message: 'Utilisateur est requis')]
-        #[Assert\Positive(message: 'Utilisateur doit être un entier positif')]
+
+        #[Assert\NotBlank(message: 'L\'utilisateur est obligatoire')]
+        #[Assert\Positive(message: 'L\'utilisateur doit être un identifiant valide')]
         private readonly ?int $user = null,
-    ) {
-    }
+    ) {}
+
     public function getTitle(): ?string
     {
         return $this->title;
@@ -60,16 +62,13 @@ class CreateArticleDto implements ArticleRequestInterface
         return $this->shortContent;
     }
 
-    public function isEnabled(): ?bool
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-        /**
-         * Get the value of user
-         */
-        public function getUser(): ?int
-        {
-                return $this->user;
-        }
+    public function getUser(): ?int
+    {
+        return $this->user;
+    }
 }
