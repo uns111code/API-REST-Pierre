@@ -1,0 +1,11 @@
+include:
+    - UserFixtures.yaml
+
+App\Entity\Article:
+    article_{1..12}:
+        title: Article <current()>
+        shortContent: <sentence(5)>
+        content: <sentence(5)>
+        enabled: <boolean()>
+        user: "@user_*"
+        # user: <randomElement([@user_admin, @user_user])>

@@ -1,0 +1,61 @@
+name: Full Process CI
+
+on:
+    push:
+        branches-ignore:
+            - "dependabot/**"
+
+jobs:
+    ci:
+        runs-on: ubuntu-latest
+        name: PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}
+        strategy:
+            matrix:
+                php: [8.3]
+                symfony: [7.1]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "${{ matrix.php }}"
+                  extensions: intl, mbstring, opcache, pdo_sqlite, apcu, pcov
+                  tools: symfony
+                  ini-values: memory_limit=3G
+                  coverage: pcov
+
+            - name: Validate Composer
+              run: composer validate
+
+            - name: Install composer dependencies
+              run: composer install --no-interaction
+
+            - name: Check Security issues
+              run: symfony security:check
+
+            - name: Check ECS review
+              run: vendor/bin/ecs check src
+
+            - name: Run Unit Tests
+              run: php bin/phpunit --testsuite=unit --coverage-clover coverage/cov-unit.xml
+
+            - name: Run Functional Tests
+              run: php bin/phpunit --testsuite=functional --coverage-clover coverage/cov-functional.xml
+
+            - name: Upload coverage report unit to Codecov
+              uses: codecov/codecov-action@v5
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN}}
+                  files: coverage/cov-unit.xml
+                  flags: unit
+                  name: codecov-umbrella
+
+            - name: Upload coverage report functional to Codecov
+              uses: codecov/codecov-action@v5
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN}}
+                  files: coverage/cov-functional.xml
+                  flags: functional
+                  name: codecov-umbrella
