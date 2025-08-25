@@ -51,3 +51,11 @@ jobs:
                   files: coverage/cov-unit.xml
                   flags: unit
                   name: codecov-umbrella
+
+            - name: Upload coverage report functional to Codecov
+              uses: codecov/codecov-action@v5
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN}}
+                  files: coverage/cov-functional.xml
+                  flags: functional
+                  name: codecov-umbrella
